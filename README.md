@@ -16,3 +16,6 @@ Serverless Applications
 
 Serverless is a concept for operating cloud applications in comparison to VM based or container based architectures. The code is executed by Function-as-a-Service (FaaS) services like AWS Lambda. You only provide your source code (think NodeJs files and libraries). AWS takes care of the execution, scaling and so on. But FaaS is only the core offering of Serverless. The idea of Serverless architectures is using additional services like S3 for storage, DynamoDB as a database, Cognito for user management and so on. All these services scale with your demand, you only pay for used resources (not for idle) and they are all operated by your cloud vendor, e.g. AWS.
 Serverless applications can be a cost saver, but above all, they remove most of the operational complexity. Serverless allows writing cloud applications with high availability and scalability easily.
+
+
+![image](https://user-images.githubusercontent.com/59709429/158893427-8c8c3e62-6e2f-4206-be54-576f31c8ca42.png)
