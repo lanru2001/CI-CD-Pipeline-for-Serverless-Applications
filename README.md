@@ -18,4 +18,6 @@ Serverless is a concept for operating cloud applications in comparison to VM bas
 Serverless applications can be a cost saver, but above all, they remove most of the operational complexity. Serverless allows writing cloud applications with high availability and scalability easily.
 
 
+Serverless Architecture
+
 ![image](https://user-images.githubusercontent.com/59709429/158893427-8c8c3e62-6e2f-4206-be54-576f31c8ca42.png)
