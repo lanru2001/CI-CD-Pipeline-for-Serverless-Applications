@@ -9,3 +9,6 @@ all steps above must be completely automated
 Below, you can see an overview of the pipeline we want to build.
 
 Overview of the target pipeline
+
+![image](https://user-images.githubusercontent.com/59709429/158893058-ec11852f-927c-4146-b9d8-812cb62c45f9.png)
+
