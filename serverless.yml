@@ -1,7 +1,16 @@
-
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Pipeline example serverless application
+
+Outputs:
+  APIRoot:
+    Description: Url of the API
+    Export:
+      # Every export needs an account wide unique name
+      Name:
+        'Fn::Sub': '${AWS::StackName}-apiroot'
+    Value:
+      'Fn::Sub': 'https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/prod'
 
 Resources:
   HelloWorldLambda:
