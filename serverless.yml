@@ -28,6 +28,15 @@ Resources:
             RestApiId: !Ref RestAPI
             Path: /
             Method: GET
+      # for gradual deployment, we need an alias. We just call it live
+      AutoPublishAlias: live
+      DeploymentPreference:
+        # Shift 10 percent of the traffic every minute
+        Type: Linear10PercentEvery1Minute
+        Alarms:
+            # larm that aborts the deployment
+            # alarm is created below!
+            - !Ref HelloWorldLambdaAlarm
   RestAPI:
     Type: 'AWS::Serverless::Api'
     Properties:
@@ -44,8 +53,9 @@ Resources:
             get:
               responses: {}
               x-amazon-apigateway-integration:
+                # Append alias live to the ARN of the lambda
                 uri: !Sub >-
-                  arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloWorldLambda.Arn}/invocations
+                  arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloWorldLambda.Arn}:live/invocations
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -64,3 +74,21 @@ Resources:
       ManagedPolicyArns:
           - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
     Type: 'AWS::IAM::Role'
+  # This alarm monitors the errors of the HelloWorld lambda function
+  HelloWorldLambdaAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: Errors of Hello World function (${AWS::StackName})
+      AlarmName: !Sub 'Hello World Errors ${AWS::StackName}'
+      # if more than zero (threshold below) errors occur, change state
+      # to alarm
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      # monitor last five minutes
+      Period: 300
+      Statistic: Sum
+      Threshold: 0
+      # if there was no invocation, the alarm state is OK
+      TreatMissingData: notBreaching
