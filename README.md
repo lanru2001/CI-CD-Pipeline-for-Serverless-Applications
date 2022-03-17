@@ -21,3 +21,5 @@ Serverless applications can be a cost saver, but above all, they remove most of 
 Serverless Architecture
 
 ![image](https://user-images.githubusercontent.com/59709429/158893427-8c8c3e62-6e2f-4206-be54-576f31c8ca42.png)
+
+Source:https://medium.com/@tarekbecker/a-production-grade-ci-cd-pipeline-for-serverless-applications-888668bcfe04
