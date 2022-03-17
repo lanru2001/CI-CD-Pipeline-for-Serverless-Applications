@@ -7,10 +7,13 @@ variables:
     AWS_DEFAULT_REGION: eu-central-1
 
 stages:
-    - install # install all npm dependencies
-    - test    # execute unit tests
-    - package # upload source code to S3
-    - deploy  # stage for deploying to production
+    - install  # install all npm dependencies
+    - test     # execute unit tests
+    - package  # upload source code to S3
+    - qaCreate # create the stack from stack for QA
+    - qaTest   # test on the QA stack
+    - qaRemove # remove the QA stack
+    - deploy   # stage for deploying to production
 
 npmInstall:
     stage: install
@@ -53,6 +56,34 @@ packageApp:
             # the modified template is the result of this stage
             - ./template-export.yml
 
+createTestStack:
+    stage: qaCreate
+    image: tarekbecker/awscli
+    dependencies:
+        - packageApp
+    script:
+        # same command as deployProd, but the stack name includes the
+        # pipeline id. This allows testing multiple pipelines concurrently.
+        - aws cloudformation deploy --template-file template-export.yml --stack-name demo-pipeline-test-$CI_PIPELINE_ID --capabilities CAPABILITY_IAM
+
+testOnTestStack:
+    stage: qaTest
+    dependencies:
+        - npmInstall
+    script:
+        - npm install aws-sdk
+        - node test/qatest.js "demo-pipeline-test-$CI_PIPELINE_ID"
+
+removeTestStack:
+    stage: qaRemove
+    image: tarekbecker/awscli
+    script:
+        - aws cloudformation delete-stack --stack-name demo-pipeline-test-$CI_PIPELINE_ID
+        - sleep 60
+        - timeout -t 190 aws cloudformation wait stack-delete-complete --stack-name demo-pipeline-test-$CI_PIPELINE_ID || (echo 'Stack deletion failed.' && exit 1)
+    # execute this job even if one of the previous ones failed
+    # to ensure not having orphan stacks
+    when: always
 
 deployProd:
     stage: deploy
